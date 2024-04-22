@@ -8,6 +8,7 @@ defmodule GlobalCounter.Application do
   @impl true
   def start(_type, _args) do
     subdomains = System.get_env("COUNTER_MT_SUBDOMAINS") |> String.split(",")
+    subdomains = subdomains ++ ["default"]
 
     global_counter_children =
       Enum.map(subdomains, fn subdomain ->
