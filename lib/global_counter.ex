@@ -3,8 +3,16 @@ defmodule GlobalCounter do
 
   @name :global_counter
 
-  def start_link(init_integer) when is_integer(init_integer) do
-    GenServer.start_link(__MODULE__, init_integer, name: {:global, @name})
+  def start_link(opts) when is_map(opts) do
+    init_integer = Map.fetch!(opts, :init_integer)
+    subdomain = Map.fetch!(opts, :subdomain)
+
+    if is_binary(subdomain) do
+      name = String.to_atom(subdomain)
+      GenServer.start_link(__MODULE__, init_integer, name: {:global, name})
+    else
+      {:error, :invalid_subdomain}
+    end
   end
 
   # def get_value(pid) do
@@ -23,9 +31,8 @@ defmodule GlobalCounter do
   end
 
   @impl true
-  def init(state) do
-    IO.puts("FIXX")
-    {:ok, state}
+  def init(init_integer) do
+    {:ok, init_integer}
   end
 
   @impl true
